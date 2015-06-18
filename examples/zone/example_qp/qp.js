@@ -91,8 +91,10 @@
       layer = e.layer;
       drawnItems.addLayer(layer);
       console.log(layer);
+      window.featureCollection.features.push(layer.toGeoJSON());
+      /**
       $.ajax({
-        url: 'http://localhost:8000/zoneville/api/v1/qp',
+        url: 'http://apicarto.coremaps.com//zoneville/api/v1/qp',
         datatype: 'json',
         method: 'POST',
         data: {geom:layer.toGeoJSON()},
@@ -101,13 +103,12 @@
           var qp_supp = "";
           feature = layer.toGeoJSON()
           feature.properties = data;
-          window.featureCollection.features.push(layer.toGeoJSON());
           for (i = 0; i < data.length; i++){
             qp_supp += "<br><span>Quartier(s) prioritaire(s) : " + data[i].code_qp+  " - " +data[i].nom_qp;
           }
           $("#selection_qp").append("<span>Dessin personnalisé</span><br>"+qp_supp +'<br>');
         }
-      });
+      });**/
     });
     $.ajax({
       url: 'http://apicarto.coremaps.com/zoneville/api/beta/qp/mapservice',
