@@ -50,10 +50,16 @@
 <link rel="stylesheet" type="text/css" href="http://leaflet.github.io/Leaflet.draw/leaflet.draw.css">
 <link rel="stylesheet" type="text/css" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css">
 <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
+<link rel="stylesheet" type="text/css" href="css/typeaheadjs.css">
+
 </head>
 <body>
 <div><h1>Bienvenue sur le mode de démonstration</h1></div>
     <button id="storedraw" class="pure-button pure-button-primary">Enregistrer le dessin</button>
+                  <div id="adresse" class="input-group">
+                <span class="input-group-addon" id="basic-addon2"><span class="glyphicon glyphicon-home" aria-collapse="true"></span></span>
+                <input type="text" class="form-control typeahead" placeholder="Adresse" aria-describedby="basic-addon2">
+              </div>
     <div id="info"></div>
 <div class="pure-g">
 <div class="sidebar pure-u-1 pure-u-md-1-4">
@@ -64,11 +70,12 @@
     <div id="map_qp"></div>
 </div>
 </div>
-<script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-geodesy/v0.1.0/leaflet-geodesy.js'></script>
 <script src="https://code.jquery.com/jquery-2.1.3.js"></script>
 <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
 <script src="http://leaflet.github.io/Leaflet.draw/leaflet.draw.js"></script>
 <script src="//api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.4/typeahead.bundle.min.js"></script>
+
 <script src="qp.js"></script>
 </body>
 </html>

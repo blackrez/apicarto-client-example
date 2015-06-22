@@ -1,5 +1,26 @@
 (function() {
   $(function() {
+      var engine = new Bloodhound({
+    remote: {url: 'http://api-adresse.data.gouv.fr/search/?q=%QUERY&type=city',
+    filter: function(list) {
+      return $.map(list.features, function(adresse) { return { label: adresse.properties.label, geometry:adresse.geometry }; });
+    }
+  },
+  datumTokenizer: function(datum) {
+    return Bloodhound.tokenizers.whitespace(d);
+
+  },
+  queryTokenizer: Bloodhound.tokenizers.whitespace
+});
+
+  engine.initialize();
+      $('#adresse .typeahead').typeahead(null, {
+    displayKey:'label',
+    source:engine.ttAdapter(),
+  }).on('typeahead:selected', function(event, data){            
+    map.setView(new L.LatLng(data.geometry.coordinates[1],data.geometry.coordinates[0]), 12);
+    });
+
     var LeafIcon, OSM, baseMap, cad, cadWmtsUrl, drawControl, drawnItems, greenIcon, ignApiKey, layers, map, mapId, onEachFeature, onMapClick, onZoom, ortho, overlayMaps, scan25, scan25url, scanWmtsUrl;
     L.drawLocal.draw.toolbar.buttons.polygon = 'Dessiner un polygone';
     L.drawLocal.draw.toolbar.actions.title = "Annule le dessin en cours";
