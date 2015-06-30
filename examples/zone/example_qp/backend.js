@@ -17,7 +17,6 @@
   L.control.layers(baseMap).addTo(map);
 
   function loaddraw(data) {
-    $("#ref").append(data.properties.ref);
     var qpLayer = L.geoJson(data).addTo(map);
     map.fitBounds(qpLayer.getBounds());
     
@@ -26,7 +25,8 @@
   $('#getdraw').click(function() {
     var ref = $("#ref").val()
     $.ajax({
-      url: 'http://apicarto.coremaps.com/api/v1/data/'+ ref +'/geojson',
+      headers: { 'AUTHORIZATION': '' },
+      url: 'http://localhost:8000/api/v1/datastore/detail/'+ ref,
       datatype: 'json',
       jsonCallback: 'getJson',
       success: loaddraw

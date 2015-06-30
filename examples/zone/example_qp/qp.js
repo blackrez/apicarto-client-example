@@ -1,24 +1,29 @@
 (function() {
-  $(function() {
-      var engine = new Bloodhound({
-    remote: {url: 'http://api-adresse.data.gouv.fr/search/?q=%QUERY&type=city',
-    filter: function(list) {
-      return $.map(list.features, function(adresse) { return { label: adresse.properties.label, geometry:adresse.geometry }; });
-    }
-  },
-  datumTokenizer: function(datum) {
-    return Bloodhound.tokenizers.whitespace(d);
+//  $(function() {
+//       var engine = new Bloodhound({
+//     remote: {url: 'http://api-adresse.data.gouv.fr/search/?q=%QUERY&type=city',
+//     filter: function(list) {
+//       return $.map(list.features, function(adresse) { return { label: adresse.properties.label, geometry:adresse.geometry }; });
+//     }
+//   },
+//   datumTokenizer: function(datum) {
+//     return Bloodhound.tokenizers.whitespace(d);
 
-  },
-  queryTokenizer: Bloodhound.tokenizers.whitespace
-});
+//   },
+//   queryTokenizer: Bloodhound.tokenizers.whitespace
+// });
 
-  engine.initialize();
-      $('#adresse .typeahead').typeahead(null, {
-    displayKey:'label',
-    source:engine.ttAdapter(),
-  }).on('typeahead:selected', function(event, data){            
-    map.setView(new L.LatLng(data.geometry.coordinates[1],data.geometry.coordinates[0]), 12);
+//   engine.initialize();
+//       $('#adresse .typeahead').typeahead(null, {
+//     displayKey:'label',
+//     source:engine.ttAdapter(),
+//   }).on('typeahead:selected', function(event, data){            
+//     map.setView(new L.LatLng(data.geometry.coordinates[1],data.geometry.coordinates[0]), 12);
+//     });
+    var anchor = $(location).attr('hash').substring(1);
+    var qp_select = JSON.parse(anchor);
+    $(window).bind( 'hashchange', function(e) { 
+      1+1
     });
 
     var LeafIcon, OSM, baseMap, cad, cadWmtsUrl, drawControl, drawnItems, greenIcon, ignApiKey, layers, map, mapId, onEachFeature, onMapClick, onZoom, ortho, overlayMaps, scan25, scan25url, scanWmtsUrl;
@@ -48,7 +53,7 @@
     window.featureCollection = new Object()
     window.featureCollection.type = 'FeatureCollection';
     window.featureCollection.features = new Array();
-    window.mapcontrol = false;
+    window.mapcontrol = true;
     OSM = L.tileLayer("http://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png", {
       attribution: '&copy; Openstreetmap France | &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     });
@@ -57,12 +62,26 @@
       zoom: 13,
       layers: [OSM]
     });
+    var info = L.control();
+        // method that we will use to update the control based on feature properties passed
+    info.update = function (props) {
+    this._div.innerHTML = '<h4>Quartier prioritaire</h4>' +  (props ?
+      '<b>' + props.nom_qp + '</b><br />' + props.commune_qp
+      : 'survolez un quartier prioritaire');
+    };
+        info.onAdd = function (map) {
+      this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+      this.update();
+      return this._div;
+    };
+    info.addTo(map);
+
     window.map = map;
     baseMap = {
       "OpenStreetMap": OSM
     };
-    var info = L.control();
-    L.control.layers(baseMap).addTo(map);
+    
+    //L.control.layers(baseMap).addTo(map);
     LeafIcon = L.Icon.extend({
       options: {
         shadowUrl: "http://leafletjs.com/docs/images/leaf-shadow.png",
@@ -131,6 +150,7 @@
         }
       });**/
     });
+    map.spin(true);
     $.ajax({
       url: 'http://apicarto.coremaps.com/zoneville/api/beta/qp/mapservice',
       datatype: 'json',
@@ -138,25 +158,6 @@
       success: loadGeoJson
     });
     window.geom_inter = {index:[]};
-
-    function onEachFeature(feature, layer) {
-      layer.on("mouseover", function (e) {
-                //layer.setStyle();              
-                info.update({nom_qp:feature.properties.nom_qp, commune_qp:feature.properties.commune_qp})
-              });
-      layer.on("mouseout", function (e) { 
-              //layer.setStyle(huc_default_style)
-              info.update() }); 
-      layer.on("click", function (e) {
-              //layer.setStyle(huc_default_style)
-              var feature = e.target.feature
-              if (window.geom_inter.index.indexOf(feature.properties.code_qp) == -1){
-                window.geom_inter.index.push(feature.properties.code_qp);
-                window.featureCollection.features.push(feature);
-                $("#selection_qp").append("<span>Quartier sélectionné : "+ feature.properties.code_qp +"</span><br>");
-              }
-            });    
-    };
 
     function style(feature) {
       return {
@@ -169,35 +170,92 @@
       };
     }
 
+    function select_style(feature) {
+      return {
+        fillColor: '#1E4E2E',
+        weight: 1,
+        opacity: 1,
+        color: 'white',
+        dashArray: '0',
+        fillOpacity: 0.6
+      };
+    }
+
+    function onEachFeature(feature, layer) {
+      var anchor = $(location).attr('hash').substring(1);
+      var qp_select = JSON.parse(anchor);
+      if (qp_select.qp.indexOf(feature.properties.code_qp) > -1){
+                window.geom_inter.index.push(feature.properties.code_qp);
+                window.featureCollection.features.push(feature);
+                layer.setStyle(select_style());
+                map.fitBounds(layer.getBounds());
+
+      }
+      layer.on("mouseover", function (e) {
+                info.update({nom_qp:feature.properties.nom_qp, commune_qp:feature.properties.commune_qp})
+              });
+      layer.on("mouseout", function (e) { 
+              info.update() }); 
+      layer.on("click", function (e) {
+              var feature = e.target.feature;
+              console.log(select_style());
+              if (window.geom_inter.index.indexOf(feature.properties.code_qp) == -1){
+                window.geom_inter.index.push(feature.properties.code_qp);
+                window.featureCollection.features.push(feature);
+                layer.setStyle(select_style());
+                $("#selection_qp").append("<span>Quartier sélectionné : "+ feature.properties.code_qp +"</span><br>");
+              }
+            });    
+    };
+
+
     function loadGeoJson(data) {
+      map.spin(false);
+      // var store = new Terraformer.GeoStore({
+      //   store: new Terraformer.GeoStore.Memory(),
+      //   index: new Terraformer.RTree()
+      // });
+      // store.add(data);
+      // window.store = store;
+      // var anchor = $(location).attr('hash').substring(1);
+      // var qp_select = JSON.parse(anchor);
+      // for (i = 0; i < qp_select.qp.length; i++){
+      // store.get(id, function (err, res) {
+      //   if (typeof res == != 'undefined'){
+      //     window.geom_inter.index.push(res.properties.code_qp);
+      //     window.featureCollection.features.push(res);
+      //   }
+      // });
+      //}
       var qpLayer = L.geoJson(data, {onEachFeature: onEachFeature, style:style()}).addTo(map);
     };
 
-    info.onAdd = function (map) {
-      this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
-      this.update();
-      return this._div;
-    };
 
-    // method that we will use to update the control based on feature properties passed
-    info.update = function (props) {
-    this._div.innerHTML = '<h4>Quartier prioritaire</h4>' +  (props ?
-      '<b>' + props.nom_qp + '</b><br />' + props.commune_qp
-      : 'survolez un quartier prioritaire');
-    };
 
-    info.addTo(map);
-
-    $('#storedraw').click(function() {
-      geom = turf.merge(window.featureCollection)
-      return $.post("http://apicarto.coremaps.com/api/v1/datastore", {
-        contentType: "application/json",
-        dataType: 'json',
-        geom: JSON.stringify(geom)
+  function store() {
+      return $.ajax("http://apicarto.coremaps.com/store/api/v2/datastore/draw", {
+        method: 'POST',
+        crossDomain: true,
+        contentType: 'application/x-www-form-urlencoded',
+        headers: { 'AUTHORIZATION': '' },
+        data: {geojson:JSON.stringify(window.featureCollection)}
       }).done(function(data) {
         $('#info').append('<span>Références pour récupérer le fichier : ' + data.reference + '</span>');
       });
-    });
-  });
+    };
+
+  L.easyButton('fa-floppy-o', store, 'Enregistrer votre sélection').addTo(map);
+
+function listener(event){
+  console.log(event);
+  console.log("received: "+event.data);
+}
+
+if (window.addEventListener){
+  addEventListener("message", listener, false)
+} else {
+  attachEvent("onmessage", listener)
+}
+
 
 }).call(this);
