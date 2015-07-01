@@ -1,5 +1,8 @@
+
 <html>
 <!DOCTYPE html>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <head>
 <title>Demo de fonctionnement d'APICARTO</title>
 <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
@@ -11,12 +14,27 @@
         margin:1em auto;
         height:100%;
         width: 100%;
+
     }
     table {
       font-size: 13;
     }  
 </style>
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!--[if IE ]>
+    <link rel="stylesheet" href="http://leafletjs.com/examples/dist/leaflet.ie.css" /></link>
+    <style type="text/css">
+          html, body { 
+        height:100%;
+    }
+    #map {
+        position:relative;
+        height:500px;
+    }
+    table {
+      font-size: 13;
+    }  
+    </style>
+<![endif]-->
 <link rel="stylesheet" type="text/css" href="http://leaflet.github.io/Leaflet.draw/leaflet.draw.css">
 <link rel="stylesheet" type="text/css" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css">
 <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
@@ -31,8 +49,8 @@
     <table id="parcelle-info" class="pure-table">
     <thead>
         <tr>
+            <th>Numéro</th>
             <th>Feuille</th>
-            <th>Numero</th>
             <th>Section</th>
             <th>Proportion parcelle </th>
         </tr>
