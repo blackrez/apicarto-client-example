@@ -1,31 +1,20 @@
 (function() {
-//  $(function() {
-//       var engine = new Bloodhound({
-//     remote: {url: 'http://api-adresse.data.gouv.fr/search/?q=%QUERY&type=city',
-//     filter: function(list) {
-//       return $.map(list.features, function(adresse) { return { label: adresse.properties.label, geometry:adresse.geometry }; });
-//     }
-//   },
-//   datumTokenizer: function(datum) {
-//     return Bloodhound.tokenizers.whitespace(d);
+  API_URL = '//api-adresse.data.gouv.fr';
 
-//   },
-//   queryTokenizer: Bloodhound.tokenizers.whitespace
-// });
-
-//   engine.initialize();
-//       $('#adresse .typeahead').typeahead(null, {
-//     displayKey:'label',
-//     source:engine.ttAdapter(),
-//   }).on('typeahead:selected', function(event, data){            
-//     map.setView(new L.LatLng(data.geometry.coordinates[1],data.geometry.coordinates[0]), 12);
-//     });
-    var anchor = $(location).attr('hash').substring(1);
-    var qp_select = JSON.parse(anchor);
-    $(window).bind( 'hashchange', function(e) { 
-      1+1
-    });
-
+  var showSearchPoints = function (geojson) {
+      console.log(geojson);
+  };
+var SHORT_CITY_NAMES = ['y', 'ay', 'bu', 'by', 'eu', 'fa', 'gy', 'oo', 'oz', 'py', 'ri', 'ry', 'sy', 'ur', 'us', 'uz'];
+var photonControlOptions = {
+    resultsHandler: showSearchPoints,
+    position: 'topleft',
+    url: API_URL + '/search/?',
+      placeholder: 'Entrer une adresse',
+    minChar: function (val) {
+        return SHORT_CITY_NAMES.indexOf(val) !== -1 || val.length >= 3;
+    },
+    submitDelay: 200
+};
     var LeafIcon, OSM, baseMap, cad, cadWmtsUrl, drawControl, drawnItems, greenIcon, ignApiKey, layers, map, mapId, onEachFeature, onMapClick, onZoom, ortho, overlayMaps, scan25, scan25url, scanWmtsUrl;
     L.drawLocal.draw.toolbar.buttons.polygon = 'Dessiner un polygone';
     L.drawLocal.draw.toolbar.actions.title = "Annule le dessin en cours";
@@ -53,14 +42,16 @@
     window.featureCollection = new Object()
     window.featureCollection.type = 'FeatureCollection';
     window.featureCollection.features = new Array();
-    window.mapcontrol = true;
     OSM = L.tileLayer("http://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png", {
       attribution: '&copy; Openstreetmap France | &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     });
     map = L.map(mapId, {
       center: new L.LatLng(43.9494421840412, 4.881191253662109),
       zoom: 13,
-      layers: [OSM]
+      layers: [OSM],
+      photonControl: true,
+    photonControlOptions: photonControlOptions,
+    photonReverseControl: true
     });
     var info = L.control();
         // method that we will use to update the control based on feature properties passed
@@ -80,7 +71,7 @@
     baseMap = {
       "OpenStreetMap": OSM
     };
-    
+
     //L.control.layers(baseMap).addTo(map);
     LeafIcon = L.Icon.extend({
       options: {
@@ -183,19 +174,21 @@
 
     function onEachFeature(feature, layer) {
       var anchor = $(location).attr('hash').substring(1);
-      var qp_select = JSON.parse(anchor);
-      if (qp_select.qp.indexOf(feature.properties.code_qp) > -1){
+      if (anchor != ""){
+        var qp_select = JSON.parse(anchor);
+        if (qp_select.qp.indexOf(feature.properties.code_qp) > -1){
                 window.geom_inter.index.push(feature.properties.code_qp);
                 window.featureCollection.features.push(feature);
                 layer.setStyle(select_style());
                 map.fitBounds(layer.getBounds());
 
+        }
       }
       layer.on("mouseover", function (e) {
                 info.update({nom_qp:feature.properties.nom_qp, commune_qp:feature.properties.commune_qp})
               });
-      layer.on("mouseout", function (e) { 
-              info.update() }); 
+      layer.on("mouseout", function (e) {
+              info.update() });
       layer.on("click", function (e) {
               var feature = e.target.feature;
               console.log(select_style());
@@ -205,7 +198,7 @@
                 layer.setStyle(select_style());
                 $("#selection_qp").append("<span>Quartier sélectionné : "+ feature.properties.code_qp +"</span><br>");
               }
-            });    
+            });
     };
 
 

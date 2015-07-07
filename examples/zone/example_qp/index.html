@@ -6,7 +6,7 @@
 <head>
 <title>Demo de fonctionnement d'APICARTO</title>
 <style type="text/css">
-      html, body { 
+      html, body {
         height:100%;
     }
     #map_qp {
@@ -30,11 +30,15 @@
     margin: 0 0 5px;
     color: #777;
 }
+
+.photon-input {
+     width: 200px;
+}
 </style>
     <!--[if IE ]>
     <link rel="stylesheet" href="http://leafletjs.com/examples/dist/leaflet.ie.css" /></link>
     <style type="text/css">
-          html, body { 
+          html, body {
         height:100%;
     }
     #map {
@@ -43,11 +47,12 @@
     }
     table {
       font-size: 13;
-    }  
+    }
     </style>
 <![endif]-->
 <link rel="stylesheet" type="text/css" href="http://leaflet.github.io/Leaflet.draw/leaflet.draw.css">
 <link rel="stylesheet" type="text/css" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css">
+<link rel="stylesheet" type="text/css" href="lib/leaflet.photon.css">
 <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.rawgit.com/CliffCloud/Leaflet.EasyButton/dd04bbf160aa33c44aa63e8a744b3632c162c340/src/easy-button.css" />
 </head>
@@ -58,13 +63,11 @@
 <script src="http://leaflet.github.io/Leaflet.draw/leaflet.draw.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js"></script>
 <script src="lib/leaflet.spin.js"></script>
+<script src="lib//leaflet.photon.js"></script>
 <script src="https://cdn.rawgit.com/CliffCloud/Leaflet.EasyButton/14332b70b18bdec80f4cce86c643372883bf90aa/src/easy-button.bar.js"></script>
 <script src="https://cdn.rawgit.com/CliffCloud/Leaflet.EasyButton/14332b70b18bdec80f4cce86c643372883bf90aa/src/easy-
 button.button.js"></script>
-<script src="http://cdn-geoweb.s3.amazonaws.com/terraformer/1.0.4/terraformer.min.js"></script>
-<script src="http://cdn-geoweb.s3.amazonaws.com/terraformer-geostore/1.0.2/terraformer-geostore.min.js"></script>
-<script src="http://cdn-geoweb.s3.amazonaws.com/terraformer-geostore-rtree/1.0.0/terraformer-geostore-rtree.min.js"></script>
-<script src="http://cdn-geoweb.s3.amazonaws.com/terraformer-geostore-memory/1.0.0/terraformer-geostore-memory.min.js"></script>
+
 <script src="qp.js"></script>
 </body>
 </html>
