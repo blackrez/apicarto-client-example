@@ -1,4 +1,3 @@
-
 <html>
 <!DOCTYPE html>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,7 +6,7 @@
 <title>Demo de fonctionnement d'APICARTO</title>
 <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
 <style type="text/css">
-      html, body { 
+      html, body {
         height:100%;
     }
     #map {
@@ -18,12 +17,20 @@
     }
     table {
       font-size: 13;
-    }  
+    }
+    html, button, input, select, textarea,
+.pure-g [class *= "pure-u"] {
+    /* Set your content font stack here: */
+    font-family: Georgia, Times, "Times New Roman", serif;
+}
+.call{
+      margin-bottom: 10px;
+}
 </style>
     <!--[if IE ]>
     <link rel="stylesheet" href="http://leafletjs.com/examples/dist/leaflet.ie.css" /></link>
     <style type="text/css">
-          html, body { 
+          html, body {
         height:100%;
     }
     #map {
@@ -32,7 +39,7 @@
     }
     table {
       font-size: 13;
-    }  
+    }
     </style>
 <![endif]-->
 <link rel="stylesheet" type="text/css" href="http://leaflet.github.io/Leaflet.draw/leaflet.draw.css">
@@ -40,12 +47,7 @@
 <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
 </head>
 <body>
-<div><h1>Bienvenue sur le mode de démonstration</h1></div>
-<span id='parcelle-area'></span>
-<div class="pure-g">
-<div class="sidebar pure-u-1 pure-u-md-1-4">
-    <button id="storedraw" class="pure-button pure-button-primary">Enregistrer le dessin</button>
-    <button id="testcadastre" class="pure-button pure-button-primary">Tester cadastre</button>
+  <script id="cadastre" type="text/x-handlebars-template">
     <table id="parcelle-info" class="pure-table">
     <thead>
         <tr>
@@ -57,10 +59,25 @@
     </thead>
     <tbody>
     </tbody>
+    {{#cadastre}}
+      {{firstName}} {{lastName}}
+    {{/list}}
     </table>
+</script>
+<div><h1>Viewer France Agrimer</h1></div>
+<span id='parcelle-area'></span>
+<div class="pure-g">
+  <div class="content pure-u-md-3-4">
+      <div id="map"></div>
+  </div>
+  <div class="sidebar pure-u-md-1-4">
+      <button id="storedraw" class="call pure-button pure-button-primary">Enregistrer le dessin</button><br>
+      <div id="aocbox"></div>
 </div>
-<div class="content pure-u-1 pure-u-md-3-4">
-    <div id="map"></div>
+<div>
+  <div class="pure-g">
+    <div class="pure-u-md-1-2"><button id="testcadastre" class="call pure-button pure-button-primary">Tester cadastre</button><div>
+    <div class="pure-u-md-2-2"><button id="testaoc" class="call pure-button pure-button-primary">Tester AOC/IGP</button></div>
 </div>
 </div>
 <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-geodesy/v0.1.0/leaflet-geodesy.js'></script>
