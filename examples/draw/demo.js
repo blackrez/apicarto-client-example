@@ -29,17 +29,17 @@
     OSM = L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
       attribution: "&copy; <a href=\"http://osm.org/copyright\">OpenStreetMap</a>"
     });
-    scanWmtsUrl = 'http://gpp3-wxs.ign.fr/' + ignApiKey + '/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTHOIMAGERY.ORTHOPHOTOS&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image%2Fjpeg';
+    scanWmtsUrl = 'http://apicarto-dev.sgmap.fr/maps' + '/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTHOIMAGERY.ORTHOPHOTOS&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image%2Fjpeg';
     ortho = L.tileLayer(scanWmtsUrl, {
       attribution: "&copy; <a href=\"http://www.ign.fr/\">IGN</a>"
     });
-    cadWmtsUrl = 'http://gpp3-wxs.ign.fr/' + ignApiKey + '/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=CADASTRALPARCELS.PARCELS&STYLE=bdparcellaire_b&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image%2Fpng&TRANSPARENT=TRUE';
+    cadWmtsUrl = 'http://apicarto-dev.sgmap.fr/maps' + '/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=CADASTRALPARCELS.PARCELS&STYLE=bdparcellaire_b&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image%2Fpng&TRANSPARENT=TRUE';
     cad = L.tileLayer(cadWmtsUrl, {
       attribution: "&copy; <a href=\"http://www.ign.fr/\">IGN</a>",
       transparent: true,
       format: 'image/png'
     });
-    scan25url = "http://gpp3-wxs.ign.fr/" + ignApiKey + "/wmts?LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD&EXCEPTIONS=text/xml&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&&TILEMATRIX={z}&TILECOL={x}&TILEROW={y}";
+    scan25url = "http://apicarto-dev.sgmap.fr/maps" + "/wmts?LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD&EXCEPTIONS=text/xml&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&&TILEMATRIX={z}&TILECOL={x}&TILEROW={y}";
     scan25 = L.tileLayer(cadWmtsUrl, {
       attribution: "&copy; <a href=\"http://www.ign.fr/\">IGN</a>"
     });
@@ -182,36 +182,10 @@
         geom: JSON.stringify(window.data)
       }).done(function(data) {
         var layer;
-        map.removeLayer(data);
         $('#parcelle-aoc').html = "";
-        layer = L.geoJson(data, {
-          onEachFeature: onEachFeatureaoc,
-          color: "yellow"
-        }).addTo(map);
+
       });
     });
-    var layers = {};
 
-    map.on('moveend', function() {
-      bbox = this.getBounds().toBBoxString();
-      $.get('http://apicarto.coremaps.com/aoc/api/beta/aoc/bbox', {
-        contentType: "application/json",
-        dataType: 'json',
-        bbox: bbox
-      }).done(function(data) {
-        var layer;
-        if (typeof layers.aoc != "undefined"){
-          map.removeLayer(layers['aoc']);
-          $('#aocbox').empty();
-        }
-        layer = L.geoJson(data, {
-          onEachFeature: onEachFeatureaocbox,
-          color: "yellow",
-          fillOpacity: 0
-        })
-        layers['aoc'] = layer;
-        layer.addTo(map);
-      });
-    })
   });
 }).call(this);

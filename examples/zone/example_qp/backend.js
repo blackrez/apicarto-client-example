@@ -13,20 +13,20 @@
   baseMap = {
     "OpenStreetMap": OSM
   };
-  
+
   L.control.layers(baseMap).addTo(map);
 
   function loaddraw(data) {
     var qpLayer = L.geoJson(data).addTo(map);
     map.fitBounds(qpLayer.getBounds());
-    
+
   };
 
   $('#getdraw').click(function() {
     var ref = $("#ref").val()
     $.ajax({
-      headers: { 'AUTHORIZATION': '' },
-      url: 'http://localhost:8000/api/v1/datastore/detail/'+ ref,
+      headers: { 'AUTHORIZATION': 'Token 809cbcc744cdc86e678486e2e23f841e0d6d1c11' },
+      url: 'http://apicarto.coremaps.com/store/api/v2/datastore/detail/'+ ref,
       datatype: 'json',
       jsonCallback: 'getJson',
       success: loaddraw
