@@ -1,0 +1,27 @@
+<html>
+<head>
+</head>
+<body>
+<form name="form">
+  <input type="text" name="msg" value="Your message"/>
+  <input type="submit"/>
+</form>
+<iframe width="400" height="400" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+   src='http://apicarto.coremaps.com/demo/examples/zone/example_qp/#{"qp":["QP971001"]}' id="iframe">
+</iframe>
+<script>
+
+  var win = document.getElementById("iframe").contentWindow
+
+  document.forms.form.onsubmit = function() {
+    win.postMessage(
+      this.elements.msg.value,
+      "http://localhost:9000" 
+    )
+    return false
+  }
+
+</script>
+
+</body>
+</html>

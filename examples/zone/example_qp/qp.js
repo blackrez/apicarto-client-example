@@ -150,7 +150,7 @@ var hash = L.hash(map);
   });
   map.spin(true);
   $.ajax({
-    url: 'http://localhost:3000/qpv/layer',
+    url: 'http://apicarto.coremaps.com/qpv/layer',
     datatype: 'json',
     jsonCallback: 'getJson',
     data: {bbox:map.getBounds().toBBoxString()},
@@ -216,7 +216,7 @@ var hash = L.hash(map);
   };
   map.on('move', function (e){
     $.ajax({
-      url: 'http://localhost:3000/qpv/layer',
+      url: 'http://apicarto.coremaps.com/qpv/layer',
       datatype: 'json',
       jsonCallback: 'getJson',
       data: {bbox:map.getBounds().toBBoxString()},
