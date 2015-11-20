@@ -1,15 +1,23 @@
 (function() {
   API_URL = '//api-adresse.data.gouv.fr';
 
-  var showSearchPoints = function(geojson) {
-    console.log(geojson);
-  };
   var SHORT_CITY_NAMES = ['y', 'ay', 'bu', 'by', 'eu', 'fa', 'gy', 'oo', 'oz', 'py', 'ri', 'ry', 'sy', 'ur', 'us', 'uz'];
   var photonControlOptions = {
-    resultsHandler: showSearchPoints,
+    //resultsHandler: showSearchPoints,
     position: 'topleft',
     url: API_URL + '/search/?',
     placeholder: 'Entrer une adresse',
+    onSelected: function (feature){
+      if (layers.marker){
+        console.log('remove');
+          map.removeLayer(layers['marker']);
+      }
+      map.setView([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], 19);
+      var marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]]);
+      layers['marker'] = marker;
+      console.log(layers['marker']);
+      marker.addTo(map);
+    },
     minChar: function(val) {
       return SHORT_CITY_NAMES.indexOf(val) !== -1 || val.length >= 3;
     },
@@ -38,7 +46,6 @@
   L.drawLocal.edit.handlers.remove.tooltip.subtext = "Cliquer sur 'annuler' pour annuler la suppression";
   mapId = "map_qp";
   layers = new Array;
-
   window.featureCollection = new Object()
   window.featureCollection.type = 'FeatureCollection';
   window.featureCollection.features = new Array();
@@ -53,6 +60,8 @@
     photonControlOptions: photonControlOptions,
     photonReverseControl: true
   });
+
+var hash = L.hash(map);
   var info = L.control();
   // method that we will use to update the control based on feature properties passed
   info.update = function(props) {
@@ -66,7 +75,6 @@
   };
   info.addTo(map);
 
-  window.map = map;
   baseMap = {
     "OpenStreetMap": OSM
   };
@@ -142,9 +150,10 @@
   });
   map.spin(true);
   $.ajax({
-    url: 'http://apicarto.coremaps.com/zoneville/api/beta/qp/mapservice',
+    url: 'http://localhost:3000/qpv/layer',
     datatype: 'json',
     jsonCallback: 'getJson',
+    data: {bbox:map.getBounds().toBBoxString()},
     success: loadGeoJson
   });
   window.geom_inter = {
@@ -174,17 +183,17 @@
   }
 
   function onEachFeature(feature, layer) {
-    var anchor = $(location).attr('hash').substring(1);
-    if (anchor != "") {
-      var qp_select = JSON.parse(anchor);
-      if (qp_select.qp.indexOf(feature.properties.code_qp) > -1) {
-        window.geom_inter.index.push(feature.properties.code_qp);
-        window.featureCollection.features.push(feature);
-        layer.setStyle(select_style());
-        map.fitBounds(layer.getBounds());
-
-      }
-    }
+    // var anchor = $(location).attr('hash').substring(1);
+    // if (anchor != "") {
+    //   var qp_select = JSON.parse(anchor);
+    //   if (qp_select.qp.indexOf(feature.properties.code_qp) > -1) {
+    //     window.geom_inter.index.push(feature.properties.code_qp);
+    //     window.featureCollection.features.push(feature);
+    //     layer.setStyle(select_style());
+    //     map.fitBounds(layer.getBounds());
+    //
+    //   }
+    // }
     layer.on("mouseover", function(e) {
       info.update({
         nom_qp: feature.properties.nom_qp,
@@ -205,7 +214,16 @@
       }
     });
   };
-
+  map.on('move', function (e){
+    $.ajax({
+      url: 'http://localhost:3000/qpv/layer',
+      datatype: 'json',
+      jsonCallback: 'getJson',
+      data: {bbox:map.getBounds().toBBoxString()},
+      success: loadGeoJson
+    });
+  }
+  )
 
   function loadGeoJson(data) {
     map.spin(false);
@@ -225,10 +243,16 @@
     //   }
     // });
     //}
+    if (layers['qpv']){
+      map.removeLayer(layers["qpv"]);
+    }
+
     var qpLayer = L.geoJson(data, {
       onEachFeature: onEachFeature,
       style: style()
-    }).addTo(map);
+    });
+    layers["qpv"] = qpLayer;
+    map.addLayer(layers["qpv"]);
   };
 
 
