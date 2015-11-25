@@ -9,11 +9,25 @@
     placeholder: 'Entrer une adresse',
     onSelected: function (feature){
       if (layers.marker){
-        console.log('remove');
           map.removeLayer(layers['marker']);
+          $("#info_qp").html("<span id='#info_qp'></span>");
       }
       map.setView([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], 19);
       var marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]]);
+      $.ajax({
+            url: 'http://localhost:3000/qpv/intersects',
+            type: 'post',
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+              if (data.length == 0){
+                $("#info_qp").html("<span id='#info_qp'>L'adresse n'est pas en quartier prioritaire.</span>");
+              }
+              else{
+                  $("#info_qp").html("<span id='info_qp'>L'adresse est dans le quartier prioritaire "+ data[0].nom_qp+" de la commune "+ data[0].commune_qp +".</span>");
+              }
+            },
+            data: JSON.stringify(feature)
+        });
       layers['marker'] = marker;
       console.log(layers['marker']);
       marker.addTo(map);
